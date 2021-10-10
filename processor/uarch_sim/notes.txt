@@ -1,0 +1,51 @@
+2. Translate to execution units
+	write this in SV!
+	make sure the memory is external to the processor and writable
+	note: I have to have at least two uarch sims to translate into hardware!
+	how to execute in parallel:
+		have one linked list of parts that are executing
+			GOOD IDEA: each linked list stores a list of pointers to functional units that are free to execute afterwards
+				multiple pointers: no dependancies, can spawn threads to run parts in parallel
+				one pointer: dependant on stage, do not parallelize
+				
+			only commit their changes when everything is done
+		
+		unsure if this works, but using glib would help a lot
+		
+	still pass the entire processor state between stages, 
+	here we get to deal with hazards!
+	
+	now possible to add uarch optimizations
+		icache / dcache
+		storing stack in hardware unit for a bit
+		register renaming?
+		pipelining
+			2 stage, 3 stage, 5 stages, how many stages?
+		
+
+3. verify output of uarch sim against soft_sim
+4. update isa.txt
+5. write into hardware
+
+to test a module:
+	
+	1. write module
+	2. write test
+	3. make it
+	4. show all signals
+	5. update config.gtkw
+	6. verify it's correct
+
+to make a module:
+	name the module <module>_unit in file <module>.v
+	name the test <module>_test.v
+	run: make src=<module>
+
+for first model:
+	round robin execution, just abysmal IPC
+	mem needs two cycles, everything else 1 cycle?
+	lays groundwork for pipelining later!
+
+TODO:
+	alu stuff
+	make timescale universal

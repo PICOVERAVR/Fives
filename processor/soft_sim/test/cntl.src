@@ -1,0 +1,60 @@
+#include "test.h"
+	
+	#suite cntl-check
+	
+    #tcase cntl
+
+#test nop
+    proc *p = calloc(1, sizeof(proc)); // important to make sure no stray bytes are different
+    proc_set_vec(p);
+
+    proc *p2 = malloc(sizeof(proc));
+    proc_set_vec(p2);
+
+    int code = instr_nop(p2);
+
+    ck_assert_int_eq(code, RET_OK);
+    ck_assert_int_eq(memcmp(p2, p, sizeof(proc)), 0); // make sure it did nothing
+
+#test stop
+	SETUP_M();
+
+    int code = instr_stop(p);
+    ck_assert_int_eq(code, RET_STOP);
+	
+	#tcase load
+
+#test load_basic1
+	SETUP_M();
+	
+	p->regfile[R3] = 0xFF01;
+	p->i.e_imm = 0xDEAD;
+	instr_ldi(p);
+	ck_assert_int_eq(p->regfile[R3], 0xFFAD);
+	
+#test load_full
+	SETUP_M();
+	uint16_t ram[8];
+	ram[0] = 42;
+
+	p->i.f_pm = 0b011;
+	p->i.d_s = R0;
+	p->i.d_d = R3;
+
+	instr_ldr(p, ram);
+	ck_assert_int_eq(p->regfile[R3], 42);
+	ck_assert_int_eq(ram[0], 42); // check for modification
+
+#test store_full
+	SETUP_M();
+	uint16_t ram[8];
+	p->regfile[R1] = 42;
+
+	p->i.f_pm = 0b011;
+	p->i.d_s = R1;
+	p->i.d_d = R0;
+
+	instr_str(p, ram);
+	ck_assert_int_eq(ram[0], 42);
+	ck_assert_int_eq(p->regfile[R1], 42); // check for modification
+

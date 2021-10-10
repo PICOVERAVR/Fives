@@ -1,0 +1,53 @@
+to do:
+	write simulator in C
+		nothing low level, just identify instructions we want/need and encoding
+	? write assembler in yacc/bison (normally would create backend for gcc)
+	write low-level simulator in Verilog
+		include microarchitecture this time
+		start with something that works properly, then play around with optimizations
+	write verilog code
+		interface to actual FPGA
+		learn Xilinx-specific IP and use it (block memory, etc.)
+		simulate it
+	upload to actual FPGA
+		should work after all this testing... hopefully
+		write support verilog (UART, memory, etc.)
+	
+	THEN
+		name it: Fives - named after Clone Wars character and the fact that it's somewhat similar to RISC-V
+		add more doc - use doxygen
+		show people
+		put in showcase
+
+observations:
+	sim should have been written in C++, hungry for overloading.
+		honestly, i'm hungry for something with an eval() statement.
+		the sim would be slow, but a lot cleaner.
+		OOP would also have been really nice here!
+
+verify/finish:
+	shift instructions
+	store
+	check for clearing upper byte when modifying low byte
+		also set upper byte to known value in tests when working with lower byte
+	usage of "s" and "d" inconsistant between proc.h and isa.txt, fix
+	
+	if paths aren't getting updated:
+		autoreconf -f -iv && ./configure && make
+	( -f forces all files to be considered obsolete )
+	( a requirement when building on a different OS, even if timestamps say it's fine )
+	
+	nicer error message for check
+
+	
+bugs:
+	make distcheck is still broken.
+	`$ ./fives -b` prints error message before welcome message.
+
+larger additions:
+	seperate floating point support
+		IEEE-754 compliant!
+	atomic memory accesses
+		multiple processors first
+	make things easier to modify
+		replace hard-coded types with typedefs (sigh)
